@@ -129,19 +129,19 @@ class Game(Shared):
     movement_name: str,
     dead_enemy: str,
   ):
-    self.__board.get_position(position_i).set_content()
+    content_f = self.__board.get_position(position_f).get_content()
     self.__board.get_position(position_f).set_content(piece)
+    self.__board.get_position(position_i).set_content()
     self.__moves.append(position_f)
 
-    is_en_passant = movement_name == 'en passant'
-    if (movement_name == 'atack'):
-      self.__log(self.__color('\nAtack:', 'bold blue'))
+    if (movement_name == 'attack'):
+      self.__log(self.__color('\nAttack:', 'bold blue'))
       self.__log(self.__color(
         f'{piece.get_name()} kill {dead_enemy}\n'.upper(),
         'bold red',
       ))
 
-    if (is_en_passant):
+    if (movement_name == 'en passant'):
       enemy_position = self.coordinate_to_position(dead_enemy)
       self.__board.get_position(enemy_position).set_content()
 
@@ -150,6 +150,16 @@ class Game(Shared):
         f'pawn kill pawn\n'.upper(),
         'bold red',
       ))
+
+    if (movement_name == 'castle'):
+      if (content_f):
+        self.__board.get_position(position_i).set_content(content_f)
+
+        self.__log(self.__color('\nCastle:', 'bold blue'))
+        self.__log(self.__color(
+          f'king swap rook\n'.upper(),
+          'bold blue',
+        ))
 
   # Console
   def __color(self, text: str, color: str) -> str:

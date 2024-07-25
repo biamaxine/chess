@@ -34,12 +34,12 @@ class Board(Shared):
     (x, y) = position
     return self.__this[y][x]
 
-  def get_matrix(self) -> list[list[tuple[str, str]]]:
+  def get_matrix(self) -> list[list[tuple[str, str, bool]]]:
     matrix = [[('', '') for _ in range(8)] for _ in range(8)]
     for y in range(8):
       for x in range(8):
         piece = self.get_position((x, y)).get_content()
         if (piece):
-          matrix[y][x] = (piece.get_color(), piece.get_name())
+          matrix[y][x] = (piece.get_color(), piece.get_name(), piece.was_moved())
 
     return matrix
