@@ -1,12 +1,12 @@
 from .....Shared import Shared
 
 pieces = {
-  'king': ('♔', '♚'),
-  'queen': ('♕', '♛'),
-  'rook': ('♖', '♜'),
-  'bishop': ('♗', '♝'),
-  'knight': ('♘', '♞'),
-  'pawn': ('♙', '♟'),
+  'king': '♚', # ♔
+  'queen': '♛', # ♕
+  'rook': '♜', # ♖
+  'bishop': '♝', # ♗
+  'knight': '♞', # ♘
+  'pawn': '♟', # ♙
 }
 
 class Piece(Shared):
@@ -17,7 +17,7 @@ class Piece(Shared):
     self.__was_moved = False
     if (name in list(pieces.keys())):
       self.__name = name
-      self.__ico = pieces[name][1] if color == 'white' else pieces[name][0]
+      self.__ico = pieces[name] if color == 'white' else pieces[name]
     else:
       raise ValueError('This name does not correspond to that of a chess piece.')
 

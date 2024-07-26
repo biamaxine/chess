@@ -1,5 +1,3 @@
-import numpy as np
-
 from ...Shared import Shared
 from .square.Square import Square
 from .square.piece.Piece import Piece
@@ -17,17 +15,24 @@ class Board(Shared):
 
   # Action Methods
   def display(self) -> None:
-    board = [[' ' for _ in range(8)] for _ in range(8)]
+    headers = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+    table = self.create_table(headers=headers, show_header=False, show_lines=True)
 
     for y in range(8):
+      row = []
       for x in range(8):
-        piece = self.get_position((x, y)).get_content()
-        if (piece):
-          board[y][x] = piece.get_ico()
-      board[y].insert(0, f'{y + 1}')
+        piece = self.get_position((x, 7-y)).get_content()
+        if piece:
+          ico = piece.get_ico()
+          color = 'bold red' if piece.get_color() == 'black' else 'bold yellow'
+          row.append(self.color(ico, color))
+        else:
+          row.append(' ')
+      table.add_row(f'{y + 1}', *row)
 
-    board.insert(0, [' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
-    print(np.array(board[::-1]))
+    table.add_row('', *headers)
+
+    self.log(table)
 
   # Access Methods
   def get_position(self, position: tuple[int, int]) -> Square:

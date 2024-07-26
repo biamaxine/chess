@@ -1,9 +1,12 @@
 # This class share the same methods with all classes
 import re
 
+from rich.console import Console
+from rich.table import Table
+from rich import box
 class Shared:
   def __init__(self) -> None:
-    pass
+    self.log = Console().print
 
   # Convertion Methods
   def x_axis_to_letter(self, x: int) -> str:
@@ -66,3 +69,23 @@ class Shared:
     if not re.match(regex, coordinate):
       raise ValueError("Coordinate must be in the format 'a1' to 'h8' or 'A1' to 'H8'.")
     return True
+
+  # Console
+  def color(self, text: str, color: str) -> str:
+    return f'[{color}]{text}[/{color}]'
+
+  def background(self, text: str, color: str) -> str:
+    return f'[on {color}]{text}[/on {color}]'
+
+  def create_table(
+    self,
+    headers: list[str] = None,
+    show_header: bool = True,
+    show_lines: bool = True,
+  ) -> Table:
+    if headers is None:
+      headers = []
+    table = Table(show_header=show_header, show_lines=show_lines, box=box.SQUARE)
+    for header in headers:
+      table.add_column(header, justify="center")
+    return table

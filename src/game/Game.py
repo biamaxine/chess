@@ -1,16 +1,11 @@
-from typing import Optional
-
 from ..Shared import Shared
 from .board.Board import Board
 from .board.square.piece.Piece import Piece
-
-from rich.console import Console
 
 class Game(Shared):
   def __init__(self) -> None:
     super().__init__()
     self.__board = Board()
-    self.__log = Console().print
     # Resetable Variables
     self.__is_started: bool = False
     self.__turn: str = 'white'
@@ -19,10 +14,10 @@ class Game(Shared):
   def start(self) -> None:
     self.__reset()
 
-    self.__log(self.__color('GAME START!\n', 'bold green'))
+    self.log(self.color('GAME START!\n', 'bold green'))
 
     while (self.__is_started):
-      self.__log(self.__background(
+      self.log(self.background(
         f'\nIts the turn of the {self.__turn.upper()} pieces\n',
         'blue',
       ), style='bold')
@@ -42,20 +37,20 @@ class Game(Shared):
     # Receives a position and checks if it is valid.
     key = True
     while(key):
-      self.__log(self.__color('\nWhich piece do you want move?', 'bold yellow'))
+      self.log(self.color('\nWhich piece do you want move?', 'bold yellow'))
       try:
         coordinate = input(': ')
         position_i = self.coordinate_to_position(coordinate)
         key = False
       except ValueError as e:
-        self.__log(self.__color(f'<<< {e} >>>', 'bold red'))
+        self.log(self.color(f'<<< {e} >>>', 'bold red'))
 
     # Get the contents in position and check if it is a piece.
     piece = self.__board.get_position(position_i).get_content()
 
     # If it is not a piece.
     if not (piece):
-      self.__log(self.__color(
+      self.log(self.color(
         f'\n<<< Oops! The coordinate "{coordinate.upper()}" is empty >>>\n',
         'bold red',
       ))
@@ -63,7 +58,7 @@ class Game(Shared):
 
     # If it is an enemy piece.
     if not (piece.get_color() == self.__turn):
-      self.__log(self.__color(
+      self.log(self.color(
         '\n<<< Oops! This piece is not yours. >>>\n',
         'bold red',
       ))
@@ -78,7 +73,7 @@ class Game(Shared):
 
     # If it is a valid piece but cannot move.
     if (len(moves) == 0):
-      self.__log(self.__color(
+      self.log(self.color(
         '\n<<< This piece cannot currently move. >>>\n',
         'bold red',
       ))
@@ -96,11 +91,11 @@ class Game(Shared):
       for movement in moves:
         options.append(movement[0].upper())
 
-    self.__log(self.__color(f'\nYour options: {options}\n', 'bold green'))
+    self.log(self.color(f'\nYour options: {options}\n', 'bold green'))
 
     key = True
     while (key):
-      self.__log(self.__color(
+      self.log(self.color(
         'Where do you want to move your piece?',
         'bold yellow',
       ))
@@ -108,14 +103,14 @@ class Game(Shared):
         coordinate = input(': ').upper()
         position_f = self.coordinate_to_position(coordinate)
         if not (coordinate in options):
-          self.__log(self.__color(
+          self.log(self.color(
             '<<< This piece does not reach that position. >>>',
             'bold red',
           ))
           return self.__select_movement(moves, options)
         key = False
       except ValueError as e:
-        self.__log(self.__color(f'<<< {e} >>>', 'bold red'))
+        self.log(self.color(f'<<< {e} >>>', 'bold red'))
 
     (_, movement_name, dead_enemy) = moves[options.index(coordinate)]
 
@@ -135,8 +130,8 @@ class Game(Shared):
     self.__moves.append(position_f)
 
     if (movement_name == 'attack'):
-      self.__log(self.__color('\nAttack:', 'bold blue'))
-      self.__log(self.__color(
+      self.log(self.color('\nAttack:', 'bold blue'))
+      self.log(self.color(
         f'{piece.get_name()} kill {dead_enemy}\n'.upper(),
         'bold red',
       ))
@@ -145,8 +140,8 @@ class Game(Shared):
       enemy_position = self.coordinate_to_position(dead_enemy)
       self.__board.get_position(enemy_position).set_content()
 
-      self.__log(self.__color('\nEn Passant:', 'bold blue'))
-      self.__log(self.__color(
+      self.log(self.color('\nEn Passant:', 'bold blue'))
+      self.log(self.color(
         f'pawn kill pawn\n'.upper(),
         'bold red',
       ))
@@ -155,18 +150,11 @@ class Game(Shared):
       if (content_f):
         self.__board.get_position(position_i).set_content(content_f)
 
-        self.__log(self.__color('\nCastle:', 'bold blue'))
-        self.__log(self.__color(
+        self.log(self.color('\nCastle:', 'bold blue'))
+        self.log(self.color(
           f'king swap rook\n'.upper(),
           'bold blue',
         ))
-
-  # Console
-  def __color(self, text: str, color: str) -> str:
-    return f'[{color}]{text}[/{color}]'
-
-  def __background(self, text: str, color: str) -> str:
-    return f'[on {color}]{text}[/on {color}]'
 
   # Access Methods
   def __reset(self) -> None:
